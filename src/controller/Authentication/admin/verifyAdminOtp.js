@@ -4,31 +4,41 @@ const verifyAdminOtp = async (req, res) => {
   try {
     const { phone, otp } = req.body;
 
-    const user = await adminModel.findOne({ phone });
-    if (!user) return res.status(400).json({ message: "User not found" });
+    const admin = await adminModel.findOne({ phone });
+    if (!admin) {
+      return res.status(400).json({ message: "Admin not found" });
+    }
 
-    if (user.otp !== otp) {
+    if (admin.isVerified) {
+      return res.status(400).json({ message: "Admin already verified" });
+    }
+
+    // 3️⃣ OTP match check (sirf valid time ke andar)
+    if (admin.otp !== otp) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    if (user.otpExpire < Date.now()) {
-      return res.status(400).json({ message: "OTP expired" });
+    // 2️⃣ Time check (1 minute ke andar)
+    if (Date.now() > admin.otpExpire) {
+      return res
+        .status(400)
+        .json({ message: "OTP expired. Please resend OTP" });
     }
 
-    user.isVerified = true;
-    user.isAdmin = true;
-    user.otp = undefined;
-    user.otpExpire = undefined;
-    await user.save();
+    console.log("OTP EXPIRE:", admin.otpExpire);
+    console.log("NOW:", Date.now());
 
-    // ✅ Abhi ke liye console me message + buildingCode print karenge
-    console.log(
-      `🎉 You are registered successfully! Building Code: ${user.buildingCode}`
-    );
+    // ✅ SUCCESS (sirf yahin allowed)
+    admin.isVerified = true;
+    admin.isAdmin = true;
+    admin.otp = null;
+    admin.otpExpire = null;
 
-    res.status(200).json({
+    await admin.save();
+
+    return res.status(200).json({
       message: "Verification successful",
-      buildingCode: user.buildingCode,
+      buildingCode: admin.buildingCode, // 🔥 wahi jo register me bana tha
     });
   } catch (error) {
     console.error(error);

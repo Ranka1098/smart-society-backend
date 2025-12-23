@@ -5,13 +5,12 @@ import bcrypt from "bcrypt";
 // Generate Unique Building Code
 // ---------------------------------------------------------
 const generateBuildingCode = async () => {
-  let isUnique = false;
   let buildingCode;
+  let exists = true;
 
-  while (!isUnique) {
+  while (exists) {
     buildingCode = `BLD-${Math.floor(100000 + Math.random() * 900000)}`;
-    const existing = await adminModel.findOne({ buildingCode });
-    if (!existing) isUnique = true;
+    exists = await adminModel.findOne({ buildingCode });
   }
 
   return buildingCode;
@@ -31,20 +30,18 @@ const adminRegister = async (req, res) => {
   try {
     const { adminName, phone, bname, address, pincode, password } = req.body;
 
-    // Check existing admin by phone
-    let existingUser = await adminModel.findOne({ phone });
+    const existingUser = await adminModel.findOne({ phone });
 
-    // Agar user verified hai → dobara register nahi kar sakta
+    // ✅ If already verified → block
     if (existingUser && existingUser.isVerified) {
       return res.status(400).json({ message: "Phone already registered" });
     }
-    const buildingCode = await generateBuildingCode();
 
-    // Generate OTP
     const otp = generateOtp();
 
-    // New user case
+    // ✅ New admin
     if (!existingUser) {
+      const buildingCode = await generateBuildingCode();
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const newAdmin = new adminModel({
@@ -53,20 +50,24 @@ const adminRegister = async (req, res) => {
         bname,
         address,
         pincode,
-        password: hashedPassword, // ✔ HASHED PASSWORD
+        password: hashedPassword,
         buildingCode,
         otp,
-        otpExpire: Date.now() + 60 * 1000, // 1 minute
+        otpExpire: Date.now() + 60 * 1000,
         isVerified: false,
         isAdmin: false,
       });
+      console.log("otp expiry time", Date.now() + 60 * 1000);
+      console.log("REGISTER API HIT");
 
       await newAdmin.save();
-    } else {
-      // User exists but not verified → Resend OTP + Update Password
+    }
+    // ✅ Existing but NOT verified → resend OTP
+    else {
       existingUser.otp = otp;
       existingUser.password = await bcrypt.hash(password, 10);
       existingUser.otpExpire = Date.now() + 60 * 1000;
+
       await existingUser.save();
     }
 
@@ -76,7 +77,7 @@ const adminRegister = async (req, res) => {
       message: "OTP sent to your phone. Please verify.",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };

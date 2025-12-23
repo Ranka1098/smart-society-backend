@@ -16,6 +16,7 @@ const shopRentRegistration = async (req, res) => {
       dateOfJoiningShop,
       password,
     } = req.body;
+    console.log("REQ BODY 👉", req.body);
 
     //---------------------------------------------------
     // 1️⃣ CHECK IF SHOP IS ALREADY APPROVED MEMBER

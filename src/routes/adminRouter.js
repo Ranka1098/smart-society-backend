@@ -11,6 +11,11 @@ import adminRejectMember from "../controller/Authentication/admin/adminRejectMem
 
 import addMaitenance from "../controller/Authentication/admin/addMaitenance.js";
 import deleteMember from "../controller/Authentication/member/deleteMember.js";
+import forgetPassword from "../controller/Authentication/admin/forgetPassword.js";
+import forgetPasswordOtp from "../controller/Authentication/admin/forgetPasswordOtp.js";
+import resetPassword from "../controller/Authentication/admin/resetPassword.js";
+import resendForgetPasswordOtp from "../controller/Authentication/admin/resendForgetPasswordOtp.js";
+
 const adminRouter = express.Router();
 
 adminRouter.post("/adminregister", adminRegister);
@@ -24,5 +29,10 @@ adminRouter.post("/adminRejectMember", adminRejectMember);
 
 adminRouter.post("/addMaintenance", verifyAdminToken, addMaitenance);
 adminRouter.delete("/deleteMember/:id", verifyAdminToken, deleteMember);
+
+adminRouter.post("/forget-password", forgetPassword);
+adminRouter.post("/verify-otp", forgetPasswordOtp);
+adminRouter.post("/reset-password", resetPassword);
+adminRouter.post("/resend-forgetpassword-otp", resendForgetPasswordOtp);
 
 export default adminRouter;

@@ -51,6 +51,12 @@ const memberSchema = new mongoose.Schema(
     },
 
     isMember: { type: Boolean, default: false },
+    resetOtp: {
+      type: String,
+    },
+    resetOtpExpiry: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

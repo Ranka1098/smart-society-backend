@@ -38,6 +38,16 @@ const adminSchema = new mongoose.Schema(
       unique: true,
     }, // special code
     otp: String,
+    otpExpire: {
+      type: Number, // 🔥 MUST be Number
+    },
+    resetOtp: {
+      type: String,
+    },
+    resetOtpExpiry: {
+      type: Number,
+    },
+
     isVerified: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
   },

@@ -15,7 +15,12 @@ const addMemberMaitenancePayment = async (req, res) => {
     // ✅ find member
     const member = await memberModel.findOne({
       buildingCode,
-      $or: [{ flatNo: Number(no) }, { shopNo: Number(no) }],
+      $or: [
+        { flatNo: no }, // string match
+        { shopNo: no }, // string match
+        { flatNo: Number(no) }, // number match
+        { shopNo: Number(no) }, // number match
+      ],
     });
 
     if (!member) {

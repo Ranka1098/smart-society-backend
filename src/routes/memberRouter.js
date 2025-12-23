@@ -14,6 +14,7 @@ import allMembersList from "../controller/Authentication/member/allMembersList.j
 import updateResidencyStatus from "../controller/Authentication/member/updateResidencyStatus.js";
 import getLoginMemberInfo from "../controller/member/getLoginMemberInfo.js";
 import singleMemberMaintenanceDetail from "../controller/member/SingleMemberMaitenanceDetail.js";
+import memberResendOtp from "../controller/Authentication/member/memberResendOtp.js";
 const memberRouter = express.Router();
 
 memberRouter.post("/flatOwnerRegister", flatOwnerRegistration);
@@ -21,6 +22,7 @@ memberRouter.post("/flatRenterRegister", flatRentRegistration);
 memberRouter.post("/shopOwner", shopOwnerRegistration);
 memberRouter.post("/shopRenter", shopRentRegistration);
 memberRouter.post("/verifyMemberOtp", verifyMemberOtp);
+memberRouter.post("/memberResendOtp", memberResendOtp);
 memberRouter.post("/adminApproveMember", adminApproveMember);
 memberRouter.post("/memberLogin", memberLogin);
 memberRouter.get("/getMemberDetail", verifyMemberToken, getMemberDetail);
