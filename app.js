@@ -11,6 +11,7 @@ import noticeRouter from "./src/routes/noticeRouter.js";
 import staffRouter from "./src/routes/staffRouter.js";
 import expenseRouter from "./src/routes/expenseRouter.js";
 import complaintRouter from "./src/routes/compliantRouter.js";
+import meetingRouter from "./src/routes/meetingRouter.js";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/", maintenanceRouter);
 app.use("/", noticeRouter);
 app.use("/", staffRouter);
 app.use("/", complaintRouter);
+app.use("/", meetingRouter);
 app.use("/uploads", express.static("uploads"));
 
 connectDB()
